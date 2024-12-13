@@ -41,6 +41,9 @@ urlpatterns = [
     path('examination/edit_question/<int:question_id>/', edit_question, name='edit_question'),
     path('examination/delete_question/<int:question_id>/', delete_question, name='delete_question'),
     path('view-student-test/<int:user_id>/',view_student_test, name='view_student_test'),
+    path('update-test-score/<int:test_id>/', update_test_score, name='update_test_score'),
+
+
     path('rules/add/', add_exam_rule, name='add_exam_rule'),
     path('rules/edit/<int:rule_id>/', edit_exam_rule, name='edit_exam_rule'),
     path('rules/delete/<int:rule_id>/', delete_exam_rule, name='delete_exam_rule'),

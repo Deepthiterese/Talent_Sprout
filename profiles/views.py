@@ -14,18 +14,8 @@ from examination.models import Test
 
 from profiles.models import UserProfile, ProjectExperience, SocialLink
 
-from django.db.models import Sum
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from examination.models import Test  # Import the Test model
-from progress_tracker.models import Project
 
-from django.db.models import Sum
 
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
-from .models import UserProfile
 
 @login_required
 def profiles_View(request):
@@ -74,10 +64,12 @@ def profiles_View(request):
             score = first_test.score
 
             # Determine level based on score and completed projects
-            if score > 80:
+            if score is not None and score > 80:  # Ensure score is not None
                 completed_projects_count = Project.objects.filter(user=request.user, status='terminated').count()
 
-                if completed_projects_count >= 5:
+                if completed_projects_count >= 7:
+                    level = "Level 5"
+                elif completed_projects_count >= 5:
                     level = "Level 4"
                 elif completed_projects_count >= 3:
                     level = "Level 3"
