@@ -36,24 +36,6 @@ class UserProfileForm(forms.ModelForm):
                 raise forms.ValidationError("Date of birth must be between 18 and 27 years from today.")
         return dob
 
-    def save(self, commit=True):
-        user_profile = super(UserProfileForm, self).save(commit=False)
-        
-        # Check required fields
-        required_fields = [
-            'dob', 'phone', 'country', 'state', 'city', 'address', 'postal_code', 
-            'role', 'position', 'experience', 'skills', 'languages', 'education', 
-            'university', 'profile_image', 'resume', 'career_objective'
-        ]
-        
-        # Set is_updated based on completeness
-        is_complete = all([getattr(user_profile, field, None) for field in required_fields])
-        user_profile.is_updated = is_complete
-        
-        if commit:
-            user_profile.save()
-        return user_profile
-
       
       
 class ProjectExperienceForm(forms.ModelForm):

@@ -146,13 +146,6 @@ def settings_View(request):
         'profile_image_url':profile_image_url
     }
     return render(request, 'profiles/settings.html', context)
-from django.contrib import messages
-from django.core.exceptions import ValidationError
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import UserProfileForm
-from .models import UserProfile
-
 @login_required
 def edit_profile_View(request):
     try:
@@ -160,18 +153,17 @@ def edit_profile_View(request):
     except UserProfile.DoesNotExist:
         user_profile = UserProfile(user=request.user)
 
-    profile_image_url = user_profile.profile_image.url if user_profile.profile_image else None
+    profile_image_url = user_profile.profile_image.url if user_profile.profile_image else None        
 
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
         if form.is_valid():
-            # Handle file naming for profile image and resume
             if 'profile_image' in request.FILES:
                 profile_image = request.FILES['profile_image']
                 max_filename_length = 1000
                 if len(profile_image.name) > max_filename_length:
                     profile_image.name = profile_image.name[:max_filename_length]
-
+                    
             if 'resume' in request.FILES:
                 resume_file = request.FILES['resume']
                 max_filename_length = 5000
@@ -180,18 +172,7 @@ def edit_profile_View(request):
                 user_profile.resume = resume_file
 
             try:
-                # Save the form and update the profile status
-                user_profile = form.save(commit=False)
-                
-                # Update is_updated flag based on profile completeness
-                required_fields = [
-                    'dob', 'phone', 'country', 'state', 'city', 'address', 'postal_code', 
-                    'role', 'position', 'experience', 'skills', 'languages', 'education', 
-                    'university', 'profile_image', 'resume', 'career_objective'
-                ]
-                user_profile.is_updated = all([getattr(user_profile, field, None) for field in required_fields])
-                
-                user_profile.save()
+                form.save()
                 messages.success(request, 'Profile updated successfully.', extra_tags='edit_profile')
                 return redirect('profiles')
             except ValidationError as e:
@@ -202,8 +183,8 @@ def edit_profile_View(request):
             return render(request, 'profiles/edit_profile.html', {'form': form, 'edit_messages': edit_messages})
     else:
         form = UserProfileForm(instance=user_profile)
+    return render(request, 'profiles/edit_profile.html', {'form': form , 'profile_image_url':profile_image_url})
 
-    return render(request, 'profiles/edit_profile.html', {'form': form, 'profile_image_url': profile_image_url})
 
 @login_required
 def add_project(request):

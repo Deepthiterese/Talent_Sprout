@@ -161,6 +161,7 @@ def exam_delete_skill(request, skill_id):
 
 
 @login_required
+@admin_required
 def add_question(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST)
@@ -177,6 +178,7 @@ def add_question(request):
     return render(request, 'admin_customization/exam/add_question.html', context)
 
 @login_required
+@admin_required
 def edit_question(request, question_id):
     question = get_object_or_404(Question, id=question_id)
 
